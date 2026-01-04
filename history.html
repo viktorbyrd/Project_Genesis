@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Genesis - Mission History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Mission History</h1>
+        
+        <div class="mode-badge {{ mode }}">{{ 'SANDBOX' if mode == 'sandbox' else 'CAMPAIGN' }}</div>
+        
+        {% if history %}
+            <ul>
+                {% for mission in history[-10:] %}
+                    <li>
+                        <strong>Day {{ mission.day }}:</strong> {{ mission.outcome }}
+                        {% if mission.injuries %}
+                            ({{ mission.injuries|join(', ') }} injured)
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No missions completed yet.</p>
+        {% endif %}
+        
+        <nav class="nav-grid">
+            <a href="{{ nav.command }}" class="nav-btn command">Command Center</a>
+            <a href="{{ nav.mission_plan }}" class="nav-btn mission">Mission Plan</a>
+            <a href="{{ nav.medical }}" class="nav-btn medical">Medical Bay</a>
+            <a href="{{ nav.war_machine }}" class="nav-btn war-machine">War Machine</a>
+        </nav>
+    </div>
+</body>
+</html>
