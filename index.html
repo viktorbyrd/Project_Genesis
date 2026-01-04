@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Genesis - Command</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Project Genesis</h1>
+        <div class="mode-badge">{{ mode | upper }}</div>
+        
+        <div class="stats-grid">
+            <div class="stat">
+                <span class="stat-label">Day</span>
+                <span class="stat-value">{{ state.day }}</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Credits</span>
+                <span class="stat-value">{{ state.credits }}</span>
+            </div>
+            <div class="stat heat-stat {{ advisor.severity }}">
+                <span class="stat-label">Global Heat</span>
+                <span class="stat-value">{{ state.global_heat }}</span>
+            </div>
+        </div>
+        
+        <div class="advisor {{ advisor.severity }}">
+            <h3>AI Advisor</h3>
+            <p>{{ advisor.message }}</p>
+        </div>
+        
+        <div class="action-grid">
+            <form action="{{ nav.command }}" method="post" style="display: inline;">
+                <input type="hidden" name="action" value="advance_day">
+                <button type="submit" class="btn btn-primary">Advance Day</button>
+            </form>
+            <form action="{{ mode }}/lay_low" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-secondary">Lay Low</button>
+            </form>
+            <form action="{{ mode }}/espionage" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-danger">Espionage</button>
+            </form>
+            <!-- SANDBOX TOGGLE -->
+            <a href="{{ nav.toggle }}" class="btn btn-warning">
+                Toggle {{ "Campaign" if mode == "sandbox" else "Sandbox" }}
+            </a>
+        </div>
+        
+        <div class="nav-grid">
+            <a href="{{ nav.mission_plan }}" class="nav-btn mission">Mission Plan</a>
+            <a href="{{ nav.history }}" class="nav-btn history">Mission History</a>
+            <a href="{{ nav.medical }}" class="nav-btn medical">Medical Bay</a>
+            <a href="{{ nav.war_machine }}" class="nav-btn war-machine">War Machine</a>
+            <a href="{{ nav.crew }}" class="nav-btn crew">Crew Roster</a>
+        </div>
+    </div>
+</body>
+</html>
