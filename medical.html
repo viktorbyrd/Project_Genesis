@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Genesis - Medical Bay</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Medical Bay</h1>
+        
+        <div class="mode-badge {{ mode }}">{{ 'SANDBOX' if mode == 'sandbox' else 'CAMPAIGN' }}</div>
+        
+        {% if injured %}
+            <h3>Injured Crew ({{ injured|length }})</h3>
+            <ul>
+                {% for crew in injured %}
+                    <li>{{ crew.name }} - Injured</li>
+                {% endfor %}
+            </ul>
+            <div class="action-grid">
+                <form action="" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-primary">Treat All (2 Days)</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="no-injuries">All crew healthy.</p>
+        {% endif %}
+        
+        <nav class="nav-grid">
+            <a href="{{ nav.command }}" class="nav-btn command">Command Center</a>
+            <a href="{{ nav.mission_plan }}" class="nav-btn mission">Mission Plan</a>
+            <a href="{{ nav.history }}" class="nav-btn history">Mission History</a>
+            <a href="{{ nav.war_machine }}" class="nav-btn war-machine">War Machine</a>
+        </nav>
+    </div>
+</body>
+</html>
