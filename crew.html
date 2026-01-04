@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Genesis - Crew Roster</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Crew Roster</h1>
+        <div class="mode-badge {{ mode }}">{{ mode | upper }}</div>
+        
+        <div class="crew-grid">
+            {% for member in crew %}
+            <div class="crew-card">
+                <div class="crew-header">
+                    <h3>{{ member.name }}</h3>
+                    <span class="status {{ member.status | lower }}">{{ member.status }}</span>
+                </div>
+                
+                <div class="crew-stats">
+                    <div class="stat">
+                        <span class="stat-label">Heat Mod</span>
+                        <span class="stat-value heat-stat {{ heat_tier(member.heat_mod) | lower }}">{{ member.heat_mod }}</span>
+                    </div>
+                    {% if member.injury %}
+                    <div class="stat injury">
+                        <span class="stat-label">Status</span>
+                        <span class="stat-value">Injured ({{ member.injury_days }} days)</span>
+                    </div>
+                    {% else %}
+                    <div class="stat healthy">
+                        <span class="stat-label">Status</span>
+                        <span class="stat-value">Active</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="crew-specialty">
+                    <strong>Specialty:</strong> {{ member.specialty }}
+                </div>
+                
+                <div class="crew-backstory">
+                    <strong>Background:</strong> {{ member.backstory }}
+                </div>
+                
+                <div class="crew-relations">
+                    <strong>Relations:</strong>
+                    <ul>
+                        {% for relation in member.relations %}
+                        <li>{{ relation }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="nav-grid">
+            <a href="{{ nav.command }}" class="nav-btn command">Command Center</a>
+            <a href="{{ nav.mission_plan }}" class="nav-btn mission">Mission Plan</a>
+            <a href="{{ nav.history }}" class="nav-btn history">Mission History</a>
+            <a href="{{ nav.medical }}" class="nav-btn medical">Medical Bay</a>
+            <a href="{{ nav.war_machine }}" class="nav-btn war-machine">War Machine</a>
+        </div>
+    </div>
+</body>
+</html>
