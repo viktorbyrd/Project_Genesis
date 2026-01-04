@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Genesis - Mission Plan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .mission-form { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .wm-toggle-section { margin: 1rem 0; }
+        .wm-toggle { font-size: 1.1em; font-weight: bold; }
+        .crew-card { border: 1px solid #444; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #222; }
+        .crew-name { font-size: 1.3em; font-weight: bold; }
+        .status-ready { color: #4CAF50; }
+        .status-injured { color: #f44336; }
+        .heat-mod { padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; }
+        .heat-low { background: #4CAF50; color: white; }
+        .heat-med { background: #FF9800; color: white; }
+        .heat-high { background: #f44336; color: white; }
+        .total-heat { font-size: 1.2em; font-weight: bold; margin-top: 1rem; }
+        @media (max-width: 768px) { .mission-form { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mission Plan</h1>
+        <div class="mode-badge {{ mode }} {{ mode | upper }}"></div>
+
+        <div class="stats-grid">
+            <div class="stat">
+                <span class="stat-label">Heat Tier</span>
+                <span class="stat-value">{{ risk.tier }}</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Injury Chance</span>
+                <span class="stat-value">{{ risk.injury_chance }}%</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Global Heat</span>
+                <span class="stat-value">{{ advisor.severity | upper }}</span>
+            </div>
+        </div>
+
+        <form action="" method="post" class="mission-form">
+            <div class="mission-left">
+                <div class="mission-type-section">
+                    <h2>Mission Type</h2>
+                    <select name="missiontype" class="mission-select">
+                        {% for key, mt in mission_types.items() %}
+                            {% if key != 'shadow' %}
+                                <option value="{{ key }}" {% if selected_type == key %}selected{% endif %}>{{ mt.label }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="wm-toggle-section">
+                    <label class="wm-toggle">
+                        <input type="checkbox" name="use_wm" value="yes" {% if use_wm != 'no' %}checked{% endif %}>
+                        Deploy War Machine (Integrity: {{ state.warmachine.integrity if state else 100 }}%)
+                    </label>
+                </div>
+
+                {% if preview %}
+                    <div class="total-heat">
+                        Total Projected Heat: 
+                        <span class="{% if preview.projected_heat_change < 5 %}heat-low{% elif preview.projected_heat_change < 15 %}heat-med{% else %}heat-high{% endif %}">
+                            {% if preview.projected_heat_change >= 0 %}+{{ preview.projected_heat_change }}{% else %}{{ preview.projected_heat_change }}{% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="mission-crew-section">
+                <h2>Assign Crew</h2>
+                {% for member in crew %}
+                    <label class="crew-card">
+                        <input type="checkbox" name="crew" value="{{ member.name }}" 
+                               {% if member.name in selected_crew %}checked{% endif %}
+                               {% if member.injury %}disabled{% endif %}>
+                        <div class="crew-header">
+                            <span class="crew-name">{{ member.name }}</span>
+                            {% if member.injury %}
+                                <span class="crew-status status-injured">Injured</span>
+                            {% else %}
+                                <span class="crew-status status-ready">Ready</span>
+                            {% endif %}
+                        </div>
+                        <div class="crew-meta">
+                            <span class="crew-specialty">{{ member.specialty }}</span>
+                            <span class="heat-mod 
+                                {% if member.heat_mod < 5 %}heat-low
+                                {% elif member.heat_mod < 10 %}heat-med
+                                {% else %}heat-high{% endif %}">
+                                Heat Mod: +{{ member.heat_mod }}
+                            </span>
+                        </div>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="mission-actions">
+                <button type="submit" class="btn btn-primary">Preview Mission</button>
+            </div>
+        </form>
+
+        {% if preview %}
+            <div class="mission-preview">
+                <h2>Mission Preview</h2>
+                <div class="preview-grid">
+                    <div class="preview-card">
+                        <span class="preview-label">Projected Success</span>
+                        <span class="preview-value">{{ preview.projected_success }}%</span>
+                    </div>
+                    <div class="preview-card">
+                        <span class="preview-label">Heat Change</span>
+                        <span class="preview-value">
+                            {% if preview.projected_heat_change >= 0 %}+{{ preview.projected_heat_change }}{% else %}{{ preview.projected_heat_change }}{% endif %}
+                        </span>
+                    </div>
+                    <div class="preview-card">
+                        <span class="preview-label">WM Integrity Change</span>
+                        <span class="preview-value">{{ preview.projected_wm_change }}</span>
+                    </div>
+                </div>
+
+                <form action="{{ url_for(mode + 'launchmission') }}" method="post" class="mission-launch-form">
+                    <input type="hidden" name="missiontype" value="{{ selected_type }}">
+                    {% for c in selected_crew %}
+                        <input type="hidden" name="crew" value="{{ c }}">
+                    {% endfor %}
+                    <input type="hidden" name="use_wm" value="{{ use_wm }}">
+                    <button type="submit" class="btn btn-danger">Launch Mission</button>
+                </form>
+            </div>
+        {% endif %}
+
+        <div class="nav-grid">
+            <a href="{{ nav.command }}" class="nav-btn command">Command Center</a>
+            <a href="{{ nav.history }}" class="nav-btn history">Mission History</a>
+            <a href="{{ nav.medical }}" class="nav-btn medical">Medical Bay</a>
+            <a href="{{ nav.warmachine }}" class="nav-btn war-machine">War Machine</a>
+            <a href="{{ nav.crew }}" class="nav-btn crew">Crew Roster</a>
+        </div>
+    </div>
+</body>
+</html>
+
