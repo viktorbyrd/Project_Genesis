@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Genesis - War Machine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>War Machine</h1>
+        
+        <div class="mode-badge {{ mode }}">{{ 'SANDBOX' if mode == 'sandbox' else 'CAMPAIGN' }}</div>
+        
+        <div class="wm-stats">
+            <div class="stat">
+                <span class="stat-label">Integrity</span>
+                <span class="stat-value">{{ "%.0f"|format(wm.integrity) }}%</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Repair Days</span>
+                <span class="stat-value">{{ wm.repair_days }}</span>
+            </div>
+        </div>
+        
+        <div class="action-grid">
+            <form action="" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-primary">Repair (1 Day)</button>
+            </form>
+        </div>
+        
+        <nav class="nav-grid">
+            <a href="{{ nav.command }}" class="nav-btn command">Command Center</a>
+            <a href="{{ nav.mission_plan }}" class="nav-btn mission">Mission Plan</a>
+            <a href="{{ nav.history }}" class="nav-btn history">Mission History</a>
+            <a href="{{ nav.medical }}" class="nav-btn medical">Medical Bay</a>
+        </nav>
+    </div>
+</body>
+</html>
