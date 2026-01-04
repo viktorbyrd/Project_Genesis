@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Genesis - Mission Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Mission Result</h1>
+        <div class="mode-badge {{ mode }}">{{ mode | upper }}</div>
+
+        {% if result %}
+        <div class="mission-result-card">
+            <h2>{{ result.mission_label }} - Day {{ result.day }}</h2>
+            <p><strong>Outcome:</strong> {{ result.outcome }}</p>
+
+            <div class="result-grid">
+                <div class="result-item">
+                    <span class="result-label">Crew Deployed</span>
+                    <span class="result-value">
+                        {% if result.crew %}
+                            {{ result.crew | join(', ') }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Heat Change</span>
+                    <span class="result-value">
+                        {% if result.projected_heat_change >= 0 %}
+                            +{{ result.projected_heat_change }}
+                        {% else %}
+                            {{ result.projected_heat_change }}
+                        {% endif %}
+                        (Now {{ result.heat_after }})
+                    </span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">WM Integrity</span>
+                    <span class="result-value">
+                        {{ result.wm_integrity_after }}%
+                        (Change {{ result.projected_wm_change }})
+                    </span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Injuries</span>
+                    <span class="result-value">
+                        {% if result.injuries %}
+                            {{ result.injuries | join(', ') }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p>No mission has been run yet.</p>
+        {% endif %}
+
+        <div class="nav-grid">
+            <a href="{{ nav.command }}" class="nav-btn command">Command Center</a>
+            <a href="{{ nav.mission_plan }}" class="nav-btn mission">Mission Plan</a>
+            <a href="{{ nav.history }}" class="nav-btn history">Mission History</a>
+            <a href="{{ nav.medical }}" class="nav-btn medical">Medical Bay</a>
+            <a href="{{ nav.war_machine }}" class="nav-btn war-machine">War Machine</a>
+        </div>
+    </div>
+</body>
+</html>
